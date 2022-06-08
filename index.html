@@ -1,169 +1,71 @@
-
-<html>
-  <head>
-    
-<meta charset="utf-8" >
-
-<title>Gridea</title>
-<meta name="description" content="">
-
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
-
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://garmin6.github.io/favicon.ico?v=1586057550630">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-<link rel="stylesheet" href="https://garmin6.github.io/styles/main.css">
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
-
-
-
-  </head>
-  <body>
-    <div id="app" class="main">
-      <div class="site-header-container">
-  <div class="site-header">
-    <div class="left">
-      <a href="https://garmin6.github.io">
-        <img class="avatar" src="https://garmin6.github.io/images/avatar.png?v=1586057550630" alt="" width="32px" height="32px">
-      </a>
-      <a href="https://garmin6.github.io">
-        <h1 class="site-title">Gridea</h1>
-      </a>
-    </div>
-    <div class="right">
-      <transition name="fade">
-        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
-      </transition>
-    </div>
-  </div>
-</div>
-
-<transition name="fade">
-  <div class="menu-container" style="display: none;" v-show="menuVisible">
-    <div class="menu-list">
-      
-        
-          <a href="/" class="menu purple-link">
-            首页
-          </a>
-        
-      
-        
-          <a href="/archives" class="menu purple-link">
-            归档
-          </a>
-        
-      
-        
-          <a href="/tags" class="menu purple-link">
-            标签
-          </a>
-        
-      
-        
-          <a href="/post/about" class="menu purple-link">
-            关于
-          </a>
-        
-      
-    </div>
-  </div>
-</transition>
-
-
-      <div class="content-container">
-        
-        
-<section class="post-item">
-    <div class="content">
-      <a href="https://garmin6.github.io/post/hello-gridea">
-        <h2 class="post-title">Hello Gridea</h2>
-      </a>
-      <div class="post-abstract">
-        <p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2018-12-12</span>
-        
-          <span>
-            <i class="icon icon-pricetags-outline"></i>
-            
-              <a href="https://garmin6.github.io/tag/lizz4lJcW">
-                Gridea
-                
-              </a>
-            
-          </span>
-        
-      </div>
-    </div>
-    
-      <a href="https://garmin6.github.io/post/hello-gridea">
-        <div class="feature-container" style="background-image: url('https://garmin6.github.io/post-images/hello-gridea.png')">
-        </div>
-      </a>
-    
-  </section>
-
-
-<div class="pagination-container">
-  
-  
-</div>
-
-
-      </div>
-
-      <div class="site-footer">
-  <div class="slogan"></div>
-  <div class="social-container">
-    
-      
-        <a href="www.github.com/garmin6" target="_blank">
-          <i class="fab fa-github"></i>
-        </a>
-      
-    
-      
-    
-      
-        <a href="https://weibo.com/2324914581" target="_blank">
-          <i class="fab fa-weibo"></i>
-        </a>
-      
-    
-      
-    
-      
-    
-  </div>
-  A glimpse of my work and life ❤ | <a class="rss" href="https://garmin6.github.io/atom.xml" target="_blank">RSS</a>
-</div>
-
-
-    </div>
-    <script type="application/javascript">
-
-hljs.initHighlightingOnLoad()
-
-var app = new Vue({
-  el: '#app',
-  data: {
-    menuVisible: false,
-  },
-})
-
-</script>
-
-
-
-
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Garmin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI',  Ubuntu,'Helvetica Neue', sans-serif;
+      font-size: calc(10px + 0.33vw);
+      -webkit-font-smoothing: antialiased;
+      padding: 5vh 10vw;
+      color: #3b3c3d;
+    }
+    h1 {
+      font-size: 4.5em;
+      font-weight: 500;
+      margin-bottom: 0;
+    }
+    p {
+      font-size: 1.6em;
+      font-weight: 300;
+      line-height: 1.4;
+      max-width: 26em;
+    }
+    a {
+      text-decoration: none;
+      color: #121314;
+      position: relative;
+    }
+    a::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 90%;
+      left: -0.1em;
+      right: -0.1em;
+      bottom: 0;
+      transition: top 500ms cubic-bezier(0, .8, .13, 1);
+      background-color: rgba(79,192,141,0.5);
+    }
+    a:hover::before {
+      top: 10%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hola ~</h1>
+  <p style="font-weight:500; font-size:2em">
+    My name is Garmin Xeo.
+  </p>
+  <p>
+    I am an undergraduate student majoring in Electronic Infomation. I'm learning
+    <a href="https://vuejs.org" target="_blank">Vue.js</a>.
+    Most of my work is open source and publicly available on
+    <a href="https://github.com/garmin6" target="_blank">GitHub</a>.
+  </p>
+  <p>
+    I have a lot of interests, rock is my favorite genre. You probably want to follow me on
+    <a href="https://twitter.com/youyuxi" target="_blank">Twitter</a> and
+    <a href="https://medium.com/@youyuxi" target="_blank">Medium</a>
+    for up-to-date content.
+  </p>
+  <p>
+    If you happen to speak Chinese, my Chinese name is 肖嘉民. you can also find me on
+    <a href="https://www.weibo.com/arttechdesign" target="_blank">微博</a> and
+    <a href="https://www.zhihu.com/people/evanyou/activities" target="_blank">知乎</a>.
+  </p>
+</body>
 </html>
