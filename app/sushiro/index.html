@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUSHIRO COUNTER</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f9f6f4;
+            min-height: 100vh;
+            padding: 20px 12px;
+            color: #333;
+        }
+        
+        .back-link {
+            font-size: 0.95em;
+            color: #999;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 8px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #555;
+        }
+
+        .total-section {
+            background: white;
+            border-top: 2px solid #b52224;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 800px;
+            width: calc(100% - 40px);
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #b52224;
+            font-family: Georgia, 'Times New Roman', serif;
+            margin-bottom: 20px;
+        }
+        
+        .plates-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            padding: 0 4px 4px 4px;
+            max-height: calc(100vh - 230px);
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        @media (min-width: 768px) {
+            .plates-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .plate-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.06);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-height: 150px;
+        }
+        
+        .plate {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            position: relative;
+            border: 5px solid white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+
+        .plate:not(.color-custom) {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .plate:not(.color-custom):active {
+            transform: translateY(-5px);
+        }
+        
+        .plate-price {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .plate-price-input {
+            width: 40px;
+            border: none;
+            border-bottom: 2px solid white;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .plus-one {
+            position: absolute;
+            color: #b52224;
+            font-size: 1.2rem;
+            font-weight: bold;
+            pointer-events: none;
+            animation: plusOneAnimation 1s ease-out forwards;
+        }
+
+        @keyframes plusOneAnimation {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+        }
+
+        .plate-price-input {
+            text-align: center;
+            background: transparent;
+            color: white;
+            outline: none;
+        }
+
+        .plate-price-input::placeholder {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .plate-price-input:focus {
+            border-color: white;
+        }
+        
+        .plate-price-input::-webkit-outer-spin-button,
+        .plate-price-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .price-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .price-symbol {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        .add-custom-card {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.5);
+            color: #ccc;
+            font-size: 4rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .plate-info {
+            text-align: center;
+            width: 100%;
+        }
+        
+        .counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .counter-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #f0f0f0;
+            color: #555;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .counter-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .counter-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .counter-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0 20px;
+            min-width: 50px;
+            text-align: center;
+            color: #d32f2f;
+        }
+        
+        .total-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .total-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .total-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        
+        .options-section {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .option-capsule {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .option-capsule.active {
+            background: #ffebee;
+            border-color: #d32f2f;
+            color: #d32f2f;
+        }
+        
+        .option-capsule.active:hover {
+            background: #ffcdd2;
+        }
+        
+        .option-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .service-counter {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .service-counter-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            color: #555;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .service-counter-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .service-counter-value {
+            font-size: 1rem;
+            font-weight: bold;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .color-white { 
+            background: linear-gradient(135deg, #f8f8f8, #f0f0f0);
+            color: #333;
+        }
+        
+        .color-white .plate-price {
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+        
+        .color-deep-red { background: linear-gradient(135deg, #c81e1e, #7a0303); }
+        .color-silver { background: linear-gradient(135deg, #eaeaea, #aaa); }
+        .color-gold { background: linear-gradient(135deg, #ffd700, #d5a018); }
+        .color-deep-gray { background: linear-gradient(135deg, #474f53, #272c2e); }
+        .color-custom { background: linear-gradient(135deg, #6dc370, #419345); }
+
+        .price-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .plates-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .plate {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .plate-price {
+                font-size: 1.3rem;
+            }
+            
+            .counter-value {
+                font-size: 1.6rem;
+            }
+            
+            .counter-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1.4rem;
+            }
+            
+            .total-amount {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .plates-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .plate-card {
+                padding: 12px;
+            }
+            
+            .plate {
+                width: 95px;
+                height: 95px;
+            }
+            
+            .counter-value {
+                font-size: 1.4rem;
+                margin: 0px;
+            }
+            
+            .counter-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1.2rem;
+            }
+            
+            .custom-input {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .plates-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .plate {
+                width: 75px;
+                height: 75px;
+            }
+            
+            .plate-price {
+                font-size: 1.1rem;
+            }
+            
+            .counter-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 1rem;
+            }
+            
+            .counter-value {
+                font-size: 1.2rem;
+                margin: 0 10px;
+            }
+            
+            .total-amount {
+                font-size: 1.8rem;
+            }
+            
+            .options-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .option-capsule {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <a class="back-link" href="/app">&#8592; Apps</a>
+        <h1 class="page-title">SUSHIRO</h1>
+        <div class="plates-grid">
+            <!-- 固定价格的碟子 -->
+            <div v-for="plate in plates" :key="plate.id" class="plate-card">
+                <div class="plate" :class="'color-' + plate.color" @click="increasePlate(plate.id, $event)">
+                    <div class="plate-price">¥{{ plate.price }}</div>
+                </div>
+                
+                <div class="plate-info">
+                    <div class="counter">
+                        <button 
+                            class="counter-btn" 
+                            @click="decreasePlate(plate.id)"
+                            :disabled="plate.count === 0"
+                            :style="plate.count === 0 ? { opacity: 0.5, cursor: 'not-allowed' } : {}"
+                        >-</button>
+                        
+                        <div class="counter-value">{{ plate.count }}</div>
+                        
+                        <button class="counter-btn" @click="increasePlate(plate.id)">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 自定义价格碟子 -->
+            <div v-for="(customPlate, index) in customPlates" :key="customPlate.id" class="plate-card">
+                <div class="plate color-custom">
+                    <div class="price-input-wrapper">
+                        <span class="price-symbol">¥</span>
+                        <input 
+                            type="number" 
+                            v-model.number="customPlate.price"
+                            min="0"
+                            max="999"
+                            placeholder="价格"
+                            class="plate-price-input"
+                            @input="limitPriceInput(customPlate)"
+                        >
+                    </div>
+                </div>
+                
+                <div class="plate-info">
+                    <div class="counter">
+                        <button 
+                            class="counter-btn" 
+                            @click="decreaseCustomPlate(index)"
+                        >-</button>
+                        
+                        <div class="counter-value">{{ customPlate.count }}</div>
+                        
+                        <button class="counter-btn" @click="increaseCustomPlate(index)">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 新增自定义碟子按钮 -->
+            <div class="plate-card" style="padding: 0;">
+                <button class="add-custom-card" @click="addCustomPlate">+</button>
+            </div>
+        </div>
+        
+        <div class="total-section">
+            <div class="total-header">
+                <div class="total-title">总价：</div>
+                <div class="total-amount">¥{{ totalPrice }}</div>
+            </div>
+            
+            <div class="options-section">
+                <div 
+                    class="option-capsule" 
+                    :class="{ active: serviceFeeEnabled }"
+                    @click="toggleServiceFee"
+                >
+                    <span class="option-label">服务费</span>
+                    <div class="service-counter">
+                        <button 
+                            class="service-counter-btn"
+                            @click.stop="decreaseServiceCount"
+                        >-</button>
+                        <span class="service-counter-value">{{ serviceCount }}</span>
+                        <button 
+                            class="service-counter-btn"
+                            @click.stop="increaseServiceCount"
+                        >+</button>
+                    </div>
+                </div>
+                
+                <div 
+                    class="option-capsule" 
+                    :class="{ active: birthdayDiscountEnabled }"
+                    @click="toggleBirthdayDiscount"
+                >
+                    <span class="option-label">生日券88折</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, reactive, computed, ref } = Vue;
+        
+        createApp({
+            setup() {
+                const plates = reactive([
+                    { 
+                        id: 1, 
+                        name: "白碟", 
+                        price: 8, 
+                        color: "white", 
+                        count: 0 
+                    },
+                    { 
+                        id: 2, 
+                        name: "红碟", 
+                        price: 10, 
+                        color: "deep-red", 
+                        count: 0 
+                    },
+                    { 
+                        id: 3, 
+                        name: "银碟", 
+                        price: 15, 
+                        color: "silver", 
+                        count: 0 
+                    },
+                    { 
+                        id: 4, 
+                        name: "金碟", 
+                        price: 20, 
+                        color: "gold", 
+                        count: 0 
+                    },
+                    { 
+                        id: 5, 
+                        name: "黑碟", 
+                        price: 28, 
+                        color: "deep-gray", 
+                        count: 0 
+                    }
+                ]);
+                
+                const customPlates = reactive([]);
+                let customPlateIdCounter = 1;
+                
+                const serviceFeeEnabled = ref(false);
+                const serviceCount = ref(1);
+                const birthdayDiscountEnabled = ref(false);
+                
+                const limitPriceInput = (plate) => {
+                    if (plate.price > 999) {
+                        plate.price = 999;
+                    }
+                };
+                
+                const increasePlate = (id, event) => {
+                    const plate = plates.find(p => p.id === id);
+                    if (plate) {
+                        plate.count++;
+                        
+                        const plusOne = document.createElement('div');
+                        plusOne.textContent = '+1';
+                        plusOne.className = 'plus-one';
+                        
+                        const rect = event.currentTarget.getBoundingClientRect();
+                        plusOne.style.left = rect.width / 2 + 45 + 'px';
+                        plusOne.style.top = rect.height / 2 + 'px';
+                        
+                        event.currentTarget.appendChild(plusOne);
+                        
+                        setTimeout(() => {
+                            plusOne.remove();
+                        }, 1000);
+                    }
+                };
+                
+                const decreasePlate = (id) => {
+                    const plate = plates.find(p => p.id === id);
+                    if (plate && plate.count > 0) {
+                        plate.count--;
+                    }
+                };
+                
+                const addCustomPlate = () => {
+                    customPlates.push({
+                        id: customPlateIdCounter++,
+                        price: 0,
+                        count: 1
+                    });
+                };
+                
+                const increaseCustomPlate = (index) => {
+                    customPlates[index].count++;
+                };
+                
+                const decreaseCustomPlate = (index) => {
+                    if (customPlates[index].count > 0) {
+                        customPlates[index].count--;
+                        if (customPlates[index].count === 0) {
+                            customPlates.splice(index, 1);
+                        }
+                    }
+                };
+                
+                const toggleServiceFee = () => {
+                    serviceFeeEnabled.value = !serviceFeeEnabled.value;
+                };
+                
+                const increaseServiceCount = () => {
+                    if (serviceCount.value < 9) {
+                        serviceCount.value++;
+                    }
+                };
+                
+                const decreaseServiceCount = () => {
+                    if (serviceCount.value > 1) {
+                        serviceCount.value--;
+                    }
+                };
+                
+                const toggleBirthdayDiscount = () => {
+                    birthdayDiscountEnabled.value = !birthdayDiscountEnabled.value;
+                };
+                
+                const fixedPlatesPrice = computed(() => {
+                    return plates.reduce((total, plate) => {
+                        return total + (plate.price * plate.count);
+                    }, 0);
+                });
+                
+                const customPlatesPrice = computed(() => {
+                    return customPlates.reduce((total, plate) => {
+                        return total + ((plate.price || 0) * plate.count);
+                    }, 0);
+                });
+                
+                const platesTotalPrice = computed(() => {
+                    return fixedPlatesPrice.value + customPlatesPrice.value;
+                });
+                
+                const serviceFee = computed(() => {
+                    if (!serviceFeeEnabled.value) return 0;
+                    return serviceCount.value * 5;
+                });
+                
+                const totalPrice = computed(() => {
+                    let total = platesTotalPrice.value + serviceFee.value;
+                    if (birthdayDiscountEnabled.value) {
+                        total *= 0.88;
+                    }
+                    return total;
+                });
+                
+                return {
+                    plates,
+                    customPlates,
+                    serviceFeeEnabled,
+                    serviceCount,
+                    birthdayDiscountEnabled,
+                    increasePlate,
+                    decreasePlate,
+                    addCustomPlate,
+                    increaseCustomPlate,
+                    decreaseCustomPlate,
+                    limitPriceInput,
+                    toggleServiceFee,
+                    increaseServiceCount,
+                    decreaseServiceCount,
+                    toggleBirthdayDiscount,
+                    totalPrice
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
