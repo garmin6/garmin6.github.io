@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -52,7 +53,7 @@
       padding: 28px 24px;
       text-decoration: none;
       color: inherit;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       display: flex;
       flex-direction: column;
@@ -61,7 +62,7 @@
 
     .app-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     }
 
     .app-icon {
@@ -82,10 +83,16 @@
     }
   </style>
 </head>
+
 <body>
   <a class="back-link" href="/">&#8592; Home</a>
   <h1>Apps</h1>
   <div class="app-grid">
+    <a class="app-card" href="/app/disc-test">
+      <div class="app-icon">&#x1F9E0;</div>
+      <div class="app-name">DISC Test</div>
+      <div class="app-desc">DISC 行为模型测试，40 道题逐题作答，统计 D/I/S/C 分布并给出行为分析。</div>
+    </a>
     <a class="app-card" href="/app/sushiro">
       <div class="app-icon">&#x1F363;</div>
       <div class="app-name">Sushiro Counter</div>
@@ -93,4 +100,5 @@
     </a>
   </div>
 </body>
+
 </html>
